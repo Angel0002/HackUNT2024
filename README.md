@@ -19,3 +19,24 @@ Building NutriSmart taught us how to balance AI’s power with practical nutriti
 
 ## What's next for NutriSmart: Your AI-Powered Meal Planner
 We’re aiming to make NutriSmart even smarter and more adaptable. Next steps include adding dietary goals for specific health conditions (like diabetes and heart health) and creating advanced customization options, such as macronutrient targeting and global cuisine preferences. A mobile app is in the works to offer meal planning on the go, integrating with wearable devices to adjust meals based on activity levels and health data. Ultimately, NutriSmart will evolve into a complete digital nutrition assistant, adapting meal plans in real-time to help users easily meet their unique wellness goals.
+
+## Prerequisites
+To get started, make sure you have the following:
+Node.js and npm installed
+A MongoDB Atlas account to store user and meal data remotely
+An OpenAI API key to enable the AI-powered meal plan generation
+
+## Installation and Setup
+Clone the Repository:```bash
+git clone https://github.com/yourusername/NutriSmart.git
+cd NutriSmart
+2.Install Dependencies::
+npm install
+
+3.Set Environment Variables::
+Set Environment Variables: in.env
+OPENAI_API_KEY=your_openai_api_key    # Essential for AI meal generation
+MONGODB_URI=your_mongo_atlas_connection_string    # Connects to MongoDB Atlas
+JWT_SECRET=your_jwt_secret    # JWT secret for secure user authentication
+
+4.npm start to start the project
