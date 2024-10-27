@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diet Plan Chatbot</title>
+  </head>
+  <body>
+    <h1>Diet Plan Chatbot</h1>
+    <form id="dietForm">
+      <label for="goal">Goal:</label>
+      <input
+        type="text"
+        id="goal"
+        name="goal"
+        placeholder="e.g., weight loss"
+        required
+      /><br />
+
+      <label for="ingredients">Ingredients (comma-separated):</label>
+      <input
+        type="text"
+        id="ingredients"
+        name="ingredients"
+        placeholder="e.g., chicken, broccoli, quinoa"
+        required
+      /><br />
+
+      <label for="restrictions">Dietary Restrictions:</label>
+      <input
+        type="text"
+        id="restrictions"
+        name="restrictions"
+        placeholder="e.g., vegetarian, gluten-free"
+      /><br />
+
+      <button type="submit">Generate Diet Plan</button>
+    </form>
+
+    <h2>Diet Plan:</h2>
+    <div id="dietPlanOutput"></div>
+
+    <script>
+      document
+        .getElementById("dietForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const goal = document.getElementById("goal").value;
+          const ingredients = document
+            .getElementById("ingredients")
+            .value.split(",")
+            .map((i) => i.trim());
+          const dietaryRestrictions =
+            document.getElementById("restrictions").value;
+
+          const response = await fetch("/generate-diet-plan", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ goal, ingredients, dietaryRestrictions }),
+          });
+
+          const data = await response.json();
+          document.getElementById("dietPlanOutput").innerHTML =
+            data.dietPlan || data.error;
+        });
+    </script>
+  </body>
+</html>

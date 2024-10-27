@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Select Ingredients</title>
+    <style>
+      /* Basic styling for the ingredient selection and output */
+      .ingredient-option {
+        margin: 5px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Select Your Ingredients</h1>
+
+    <form id="ingredientForm">
+      <label for="ingredientInput">Enter Ingredients (comma-separated):</label>
+      <input
+        type="text"
+        id="ingredientInput"
+        name="ingredientInput"
+        placeholder="e.g., chicken, broccoli, quinoa"
+        required
+      /><br />
+      <button type="submit">Create Meal Plan</button>
+    </form>
+
+    <!-- Section to display diet plan output -->
+    <div id="dietPlanOutput"></div>
+
+    <p><a href="dashboard.html">Back to Dashboard</a></p>
+
+    <script>
+      document
+        .getElementById("ingredientForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          // Example goal and dietary restriction
+          const goal = "weight loss";
+          const dietaryRestrictions = "vegetarian";
+
+          // Parse ingredients from input
+          const ingredients = document
+            .getElementById("ingredientInput")
+            .value.split(",")
+            .map((i) => i.trim());
+
+          // Retrieve token from local storage for authorization
+          const token = localStorage.getItem("token");
+
+          try {
+            const response = await fetch("/api/diet/generate-diet-plan", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ goal, ingredients, dietaryRestrictions }),
+            });
+
+            console.log("Response Status:", response.status);
+
+            // Check if response is successful
+            const data = await response.json();
+            console.log("Full Response Data:", data);
+
+            if (response.ok) {
+              // If dietPlan is present in response data, display it; otherwise, show an error
+              if (data.dietPlan) {
+                document.getElementById(
+                  "dietPlanOutput"
+                ).innerHTML = `<pre>${JSON.stringify(
+                  data.dietPlan,
+                  null,
+                  2
+                )}</pre>`;
+                alert("Meal plan created successfully!");
+              } else {
+                console.error("Diet plan data not found in response.");
+                alert("Error: Diet plan data not found.");
+              }
+            } else {
+              // Show error message if response is not OK
+              console.error("Server returned an error:", data);
+              alert(
+                data.error || "Error creating diet plan. Please try again."
+              );
+            }
+          } catch (error) {
+            // Catch and display network errors
+            console.error("Network or Server Error:", error);
+            alert("Network error or server issue. Please try again.");
+          }
+        });
+    </script>
+  </body>
+</html>

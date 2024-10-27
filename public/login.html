@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Supper - Login</title>
+    <link rel="stylesheet" href="/login.css" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="content">
+        <div class="name">Smart Supper</div>
+      </div>
+      <div class="wrapper">
+        <div class="form-wrapper">
+          <h2>Login</h2>
+          <form
+            id="loginForm"
+            onsubmit="event.preventDefault(); handleLogin();"
+            novalidate
+          >
+            <div class="email">
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div class="password">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required />
+            </div>
+            <div class="submit">
+              <button type="submit">Log In</button>
+            </div>
+          </form>
+          <p>Don’t have an account? <a href="/api/auth/register">Sign Up</a></p>
+        </div>
+      </div>
+
+      <footer class="footer">
+        Made with
+        <span role="img" aria-label="Heart Emoji">❤️</span>
+      </footer>
+    </div>
+
+    <script>
+      // Client-side validation function
+      function validateForm() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+          alert("Please enter a valid email address.");
+          return false;
+        }
+
+        // Password validation (uncomment if needed)
+        // if (password.length < 6) {
+        //   alert("Password must be at least 6 characters long.");
+        //   return false;
+        // }
+
+        return true;
+      }
+
+      // Function to handle login using fetch
+      async function handleLogin() {
+        // Run client-side validation
+        if (!validateForm()) return;
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+            credentials: "include", // Include cookies for session management
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+              window.location.href = data.redirectUrl;
+            }
+          } else {
+            alert("Login failed. Please check your email and password.");
+          }
+        } catch (error) {
+          console.error("Network error during login:", error);
+          alert("An unexpected error occurred during login.");
+        }
+      }
+    </script>
+  </body>
+</html>

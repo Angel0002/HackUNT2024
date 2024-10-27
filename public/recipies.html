@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Recipe Suggestions</title>
+  </head>
+  <body>
+    <h1>Your Generated Diet Plan</h1>
+    <div id="recipeOutput">
+      <!-- Recipe output will be inserted here via JavaScript after API call -->
+    </div>
+    <p><a href="ingredients.html">Go back to Select Ingredients</a></p>
+    <p><a href="dashboard.html">Back to Dashboard</a></p>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      const ingredients = JSON.parse(
+        localStorage.getItem("selectedIngredients")
+      );
+      const goal = "weight loss"; // This can be modified to get user-defined goals
+
+      if (ingredients) {
+        const response = await fetch("/generate-diet-plan", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ goal, ingredients }),
+        });
+
+        const data = await response.json();
+        document.getElementById("recipeOutput").innerHTML =
+          data.dietPlan || "Failed to generate recipe.";
+      }
+    });
+  </script>
+</html>

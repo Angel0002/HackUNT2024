@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Dashboard</title>
+    <style>
+      /* Overall background styling */
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          #f6d365,
+          #fda085
+        ); /* Light gradient background */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      /* Header styling */
+      h1 {
+        font-size: 2.5em;
+        margin-top: 20px;
+        color: #333;
+      }
+
+      p.subheading {
+        font-size: 1.2em;
+        color: #555;
+        margin-bottom: 20px;
+      }
+
+      /* Dropdown styling */
+      #dietPlanSelector {
+        font-size: 1em;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+        margin-bottom: 20px;
+        background-color: #fff;
+        color: #555;
+        cursor: pointer;
+        transition: border-color 0.3s;
+      }
+
+      #dietPlanSelector:focus {
+        border-color: #4caf50;
+      }
+
+      /* Food container styling */
+      .food-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 1000px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      /* Food item card styling */
+      .food-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .food-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      .food-item.selected {
+        border: 2px solid #4caf50;
+      }
+
+      /* Food item image styling */
+      .food-item img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      /* Food item name styling */
+      .food-item h2 {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin: 0;
+        color: #333;
+      }
+
+      /* Button container and button styling */
+      .button-container {
+        margin-top: 20px;
+      }
+
+      .button-container button {
+        padding: 12px 24px;
+        font-size: 1em;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .button-container button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .button-container button:hover:not(:disabled) {
+        background-color: #45a049;
+        transform: translateY(-2px);
+      }
+
+      /* Meal plan output styling */
+      #mealPlanOutput {
+        margin-top: 20px;
+        font-size: 1.2em;
+        color: #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Food Dashboard</h1>
+    <p class="subheading">Select 3-5 food items</p>
+
+    <!-- Dropdown for diet plan selection -->
+    <select id="dietPlanSelector">
+      <option value="">Select Diet Plan</option>
+      <option value="muscle">Muscle</option>
+      <option value="regular">Regular</option>
+      <option value="fatloss">Fat Loss</option>
+    </select>
+
+    <div class="food-container">
+      <% ingredients.forEach(ingredient => { %>
+      <div class="food-item" data-id="<%= ingredient._id %>">
+        <img src="<%= ingredient.image %>" alt="<%= ingredient.name %>" />
+        <h2><%= ingredient.name %></h2>
+      </div>
+      <% }) %>
+    </div>
+
+    <div class="button-container">
+      <button id="createMealPlan" disabled>Create Meal Plan</button>
+    </div>
+
+    <!-- Placeholder for displaying diet plan or messages -->
+    <div id="mealPlanOutput"></div>
+
+    <script>
+      const selectedItems = new Set();
+      const maxSelection = 5;
+      const minSelection = 3;
+
+      document.querySelectorAll(".food-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const itemId = item.getAttribute("data-id");
+
+          if (selectedItems.has(itemId)) {
+            selectedItems.delete(itemId);
+            item.classList.remove("selected");
+          } else if (selectedItems.size < maxSelection) {
+            selectedItems.add(itemId);
+            item.classList.add("selected");
+          }
+
+          const button = document.getElementById("createMealPlan");
+          const dietPlan = document.getElementById("dietPlanSelector").value;
+          button.disabled =
+            selectedItems.size < minSelection ||
+            selectedItems.size > maxSelection ||
+            !dietPlan;
+        });
+      });
+
+      document
+        .getElementById("createMealPlan")
+        .addEventListener("click", async () => {
+          const selectedArray = Array.from(selectedItems);
+          const dietPlan = document.getElementById("dietPlanSelector").value;
+
+          // Show loading message
+          const output = document.getElementById("mealPlanOutput");
+          output.innerHTML = "Creating meal plan, please wait...";
+
+          try {
+            const response = await fetch("/api/createMealPlan", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                goal: dietPlan,
+                ingredients: selectedArray,
+              }),
+            });
+
+            console.log("Response status:", response.status);
+
+            if (!response.ok) {
+              throw new Error("Failed to generate diet plan.");
+            }
+
+            // Show message and then redirect after a delay
+            setTimeout(() => {
+              output.innerHTML =
+                "Meal plan is being generated. Please check back shortly.";
+
+              // Redirect to the diet plan page after an additional delay
+              setTimeout(() => {
+                window.location.href = "http://localhost:3000/api/dietPlan";
+              }, 2000); // Redirect after another 2 seconds
+            }, 2000); // Initial message delay
+          } catch (error) {
+            console.error("Error creating diet plan:", error);
+            output.innerHTML =
+              "Error creating diet plan. Please try again later.";
+          }
+        });
+    </script>
+  </body>
+</html>

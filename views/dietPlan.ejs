@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Diet Plan</title>
+    <style>
+      /* General page styling */
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #f6d365,
+          #fda085
+        ); /* Light gradient background */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      /* Title styling */
+      .title {
+        margin-top: 20px;
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #333;
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Container for diet plan cards */
+      .diet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        max-width: 1000px;
+        width: 100%;
+        padding: 20px;
+      }
+
+      /* Individual card styling */
+      .diet-card {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+      }
+
+      /* Hover effect for cards */
+      .diet-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Day heading styling */
+      .day-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      /* Meal plan content styling */
+      .meal-plan {
+        font-size: 1em;
+        color: #555;
+        text-align: left;
+        width: 100%;
+        line-height: 1.6;
+      }
+
+      /* Logout button styling */
+      .logout-button {
+        margin: 20px;
+        padding: 12px 24px;
+        font-size: 1em;
+        font-weight: bold;
+        color: white;
+        background-color: #f44336;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      /* Logout button hover effect */
+      .logout-button:hover {
+        background-color: #d32f2f;
+        transform: translateY(-2px);
+      }
+
+      /* Responsive adjustments for smaller screens */
+      @media (max-width: 768px) {
+        .diet-grid {
+          grid-template-columns: 1fr;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Weekly Diet Plan</h1>
+
+    <!-- Logout Button -->
+    <button class="logout-button" id="logoutButton">Logout</button>
+
+    <div class="diet-grid">
+      <!-- Loop over the diet plan data passed from the server -->
+      <% dietPlan.forEach(day => { %>
+      <div class="diet-card">
+        <div class="day-title"><%= day.day %></div>
+        <div class="meal-plan">
+          <p>- Breakfast: <%= day.meals.breakfast %></p>
+          <p>- Lunch: <%= day.meals.lunch %></p>
+          <p>- Dinner: <%= day.meals.dinner %></p>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <script>
+      // Logout button functionality
+      document
+        .getElementById("logoutButton")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch("/api/logout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            });
+
+            if (response.ok) {
+              // Redirect to login page after successful logout
+              window.location.href = "/";
+            } else {
+              alert("Failed to log out. Please try again.");
+            }
+          } catch (error) {
+            console.error("Logout error:", error);
+            alert("Error logging out. Please try again later.");
+          }
+        });
+    </script>
+  </body>
+</html>
