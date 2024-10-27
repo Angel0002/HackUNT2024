@@ -37,10 +37,8 @@ npm install
 3.Set Environment Variables::
 Set Environment Variables: in.env
 
-OPENAI_API_KEY=your_openai_api_key    # Essential for AI meal generation
-
-MONGODB_URI=your_mongo_atlas_connection_string    # Connects to MongoDB Atlas
-
-JWT_SECRET=your_jwt_secret    # JWT secret for secure user authentication
+  OPENAI_API_KEY=your_openai_api_key    # Essential for AI meal generation
+  MONGODB_URI=your_mongo_atlas_connection_string    # Connects to MongoDB Atlas
+  JWT_SECRET=your_jwt_secret    # JWT secret for secure user authentication
 
 4.npm start to start the project
