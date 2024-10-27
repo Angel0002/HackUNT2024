@@ -27,7 +27,7 @@ A MongoDB Atlas account to store user and meal data remotely
 An OpenAI API key to enable the AI-powered meal plan generation
 
 ## Installation and Setup
-Clone the Repository:```bash
+1.Clone the Repository:```bash
 git clone https://github.com/yourusername/NutriSmart.git
 cd NutriSmart
 
