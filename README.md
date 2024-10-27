@@ -30,6 +30,7 @@ An OpenAI API key to enable the AI-powered meal plan generation
 Clone the Repository:```bash
 git clone https://github.com/yourusername/NutriSmart.git
 cd NutriSmart
+
 2.Install Dependencies::
 npm install
 
