@@ -1,4 +1,4 @@
-**NutriSmart**
+## **NutriSmart**
 ## Inspiration
 NutriSmart was born out of the everyday challenge of planning meals that meet personal health goals. We wanted to take the hassle out of figuring out balanced, goal-oriented meal plans by automating it with AI, saving people time and helping them stay on track.
 ## What it does
